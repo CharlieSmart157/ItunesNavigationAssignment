@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+
+        <item
+            android:id="@+id/Classic"
+            android:checked="false"
+            android:title="@string/classic" />
+        <item
+            android:id="@+id/Pop"
+            android:checked="false"
+            android:title="@string/pop" />
+        <item
+            android:id="@+id/Rock"
+            android:checked="false"
+            android:title="@string/rock" />
+
+    </group>
+</menu>
