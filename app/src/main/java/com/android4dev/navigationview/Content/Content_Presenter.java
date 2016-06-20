@@ -61,6 +61,7 @@ public class Content_Presenter implements Content_Contract.Presenter{
                         public void onCompleted() {
                             //Send Results to View
                           //  mContentView.setmAdapter(results);
+
                             RealmController.getInstance().addLocalList(results);
                         }
 

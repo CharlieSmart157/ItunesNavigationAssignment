@@ -1,10 +1,14 @@
 package com.android4dev.navigationview;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -47,6 +51,7 @@ public class ContentFragment extends Fragment implements Content_Contract.View, 
     boolean connected;
     SwipeRefreshLayout mSwipeRefresher;
     Realm realm;
+    BroadcastReceiver broadcastReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,7 +65,7 @@ public class ContentFragment extends Fragment implements Content_Contract.View, 
         this.realm = RealmController.with(getActivity()).getRealm();
        // realm = Realm.getInstance(getActivity());
 
-
+        installListener();
         initializeRecyclerView(v);
        // classicPattern();
         return v;
@@ -78,10 +83,10 @@ public class ContentFragment extends Fragment implements Content_Contract.View, 
 
     public void setmAdapter(ArrayList<Result> L){
 
-
         mAdapter = new ResultAdapter(getContext(),L,R.layout.card_row );
         lvSongList.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -97,6 +102,17 @@ public class ContentFragment extends Fragment implements Content_Contract.View, 
         Log.d("REFRESH_LOG", "onRefresh called from SwipeRefreshLayout");
         mPresenter.returnResults(mode);
        mSwipeRefresher.setRefreshing(false);
+
+        Snackbar snackbar = Snackbar
+                .make(mSwipeRefresher, "Refreshed", Snackbar.LENGTH_LONG)
+                .setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    }
+                });
+        snackbar.show();
+
+
     }
 
     private boolean isNetworkAvailable() {
@@ -104,5 +120,52 @@ public class ContentFragment extends Fragment implements Content_Contract.View, 
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void installListener() {
+
+        if (broadcastReceiver == null) {
+
+            broadcastReceiver = new BroadcastReceiver() {
+
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                    Bundle extras = intent.getExtras();
+
+                    NetworkInfo info = (NetworkInfo) extras
+                            .getParcelable("networkInfo");
+
+                    NetworkInfo.State state = info.getState();
+
+
+                    if (state == NetworkInfo.State.CONNECTED) {
+
+
+
+                    } else {
+
+
+                            Snackbar snackbar = Snackbar
+                                    .make(mSwipeRefresher, "Offline", Snackbar.LENGTH_LONG)
+                                    .setAction("Dismiss", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            mSwipeRefresher.setRefreshing(true);
+                                            onRefresh();
+                                        }
+                                    });
+                            snackbar.show();
+
+
+                    }
+
+                }
+            };
+
+            final IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            getActivity().registerReceiver(broadcastReceiver,intentFilter);
+        }
     }
 }
