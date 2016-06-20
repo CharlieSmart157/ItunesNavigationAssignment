@@ -68,7 +68,6 @@ public class RealmController {
 
     //clear all objects from Book.class
     public void clearAll() {
-
         realm.beginTransaction();
         realm.clear(RealmResult.class);
         realm.commitTransaction();

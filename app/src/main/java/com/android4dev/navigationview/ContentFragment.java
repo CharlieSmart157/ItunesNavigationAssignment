@@ -73,7 +73,7 @@ public class ContentFragment extends Fragment implements Content_Contract.View, 
         lvSongList = (RecyclerView)v.findViewById(R.id.recycler_view);
         lvSongList.setLayoutManager(new LinearLayoutManager(getActivity()));
         lvSongList.setItemAnimator(new DefaultItemAnimator());
-        mPresenter.returnResults(mode, isNetworkAvailable());
+        mPresenter.returnResults(mode);
     }
 
     public void setmAdapter(ArrayList<Result> L){
@@ -95,7 +95,7 @@ public class ContentFragment extends Fragment implements Content_Contract.View, 
     @Override
     public void onRefresh() {
         Log.d("REFRESH_LOG", "onRefresh called from SwipeRefreshLayout");
-        mPresenter.returnResults(mode, isNetworkAvailable());
+        mPresenter.returnResults(mode);
        mSwipeRefresher.setRefreshing(false);
     }
 

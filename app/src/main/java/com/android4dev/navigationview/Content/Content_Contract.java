@@ -18,6 +18,6 @@ public interface Content_Contract {
 
     interface Presenter extends BasePresenter{
 
-        void returnResults(int i, boolean b);
+        void returnResults(int i);
     }
 }

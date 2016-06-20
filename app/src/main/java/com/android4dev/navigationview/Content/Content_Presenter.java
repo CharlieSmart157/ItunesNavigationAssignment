@@ -34,7 +34,7 @@ public class Content_Presenter implements Content_Contract.Presenter{
     ArrayList<Result> results = new ArrayList<Result>();
     Activity mActivity;
     RestAdapter restapi;
-    boolean connected;
+
 
     @Override
     public void start() {}
@@ -51,7 +51,7 @@ public class Content_Presenter implements Content_Contract.Presenter{
     }
 
     public void classicPattern(){
-        if(connected) {
+
             iClassic_catApi = restapi.create(IClassic_CatApi.class);
             _subscriptions.add(iClassic_catApi.getSongs()
                     .observeOn(AndroidSchedulers.mainThread())
@@ -60,7 +60,8 @@ public class Content_Presenter implements Content_Contract.Presenter{
                         @Override
                         public void onCompleted() {
                             //Send Results to View
-                            mContentView.setmAdapter(results);
+                          //  mContentView.setmAdapter(results);
+                            RealmController.getInstance().addLocalList(results);
                         }
 
                         @Override
@@ -79,16 +80,15 @@ public class Content_Presenter implements Content_Contract.Presenter{
 
 
             );
-        }
 
-        else
+
+
             mContentView.setmAdapter(RealmController.getInstance().getLocalList());
 
     }
 
     public void popPattern(){
-        if(connected)
-        {
+
         iPop_catApi = restapi.create(IPop_CatApi.class);
         _subscriptions.add(iPop_catApi.getSongs()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -97,7 +97,8 @@ public class Content_Presenter implements Content_Contract.Presenter{
                     @Override
                     public void onCompleted() {
                         //Send Results to View
-                        mContentView.setmAdapter(results);
+                       // mContentView.setmAdapter(results);
+                        RealmController.getInstance().addLocalList(results);
                     }
 
                     @Override
@@ -116,13 +117,12 @@ public class Content_Presenter implements Content_Contract.Presenter{
 
 
         );
-    }
-    else
+
             mContentView.setmAdapter(RealmController.getInstance().getLocalList());
     }
 
     public void punkPattern(){
-        if(connected) {
+
             iPunk_catApi = restapi.create(IPunk_CatApi.class);
             _subscriptions.add(iPunk_catApi.getSongs()
                     .observeOn(AndroidSchedulers.mainThread())
@@ -132,7 +132,7 @@ public class Content_Presenter implements Content_Contract.Presenter{
                         public void onCompleted() {
                             //Send Results to View
                             RealmController.getInstance().addLocalList(results);
-                            mContentView.setmAdapter(results);
+                          //  mContentView.setmAdapter(results);
                         }
 
                         @Override
@@ -151,15 +151,12 @@ public class Content_Presenter implements Content_Contract.Presenter{
 
 
             );
-        }
-        else
+
         mContentView.setmAdapter(RealmController.getInstance().getLocalList());
     }
 
     @Override
-    public void returnResults(int i, boolean b){
-        connected = b;
-        Log.i("ONLINE", ""+connected);
+    public void returnResults(int i){
          switch (i) {
              case 0:
                  classicPattern();
